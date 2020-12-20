@@ -2,27 +2,20 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/FirstFragment">
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/songBacklogFragment">
 
     <fragment
-        android:id="@+id/FirstFragment"
+        android:id="@+id/songBacklogFragment"
         android:name="com.example.capstone.code.ui.SongBacklogFragment"
-        android:label="@string/first_fragment_label"
-        tools:layout="@layout/fragment_song_backlog">
-
+        android:label="fragment_song_backlog"
+        tools:layout="@layout/fragment_song_backlog" >
         <action
-            android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            android:id="@+id/action_songBacklogFragment_to_addSongFragment"
+            app:destination="@id/addSongFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
+        android:id="@+id/addSongFragment"
         android:name="com.example.capstone.code.ui.AddSongFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_add_song">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
-    </fragment>
+        android:label="AddSongFragment" />
 </navigation>

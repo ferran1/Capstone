@@ -9,6 +9,11 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="add_song">add song button</string>
+    <string name="add_song">Add new favourite song</string>
+    <string name="add_song_title">add song button</string>
     <string name="delete_songs">Delete songs</string>
+    <string name="hint_title">Song URL (From Spotify, Soundcloud or Youtube)</string>
+    <string name="save">Save</string>
+
+
 </resources>
