@@ -17,5 +17,9 @@
     <fragment
         android:id="@+id/addSongFragment"
         android:name="com.example.capstone.code.ui.AddSongFragment"
-        android:label="AddSongFragment" />
+        android:label="AddSongFragment" >
+        <action
+            android:id="@+id/action_addSongFragment_to_songBacklogFragment"
+            app:destination="@id/songBacklogFragment" />
+    </fragment>
 </navigation>

@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "song_table")
 class Song (
 
+        val url : String,
         val name: String,
         val artist: String,
         val platform: String,

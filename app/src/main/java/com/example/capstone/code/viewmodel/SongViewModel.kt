@@ -17,9 +17,10 @@ class SongViewModel(application: Application) : AndroidViewModel(application) {
 
     val songList: LiveData<List<Song>> = repository.getSongList()
 
-    fun insertSong(name: String,  artist: String, platform: String) {
+    fun insertSong(url: String, name: String,  artist: String, platform: String) {
         mainScope.launch {
             val song = Song(
+                url = url,
                 name = name,
                 artist = artist,
                 platform = platform
