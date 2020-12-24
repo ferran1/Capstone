@@ -4,7 +4,7 @@
     tools:context="com.example.capstone.code.ui.MainActivity">
 
     <item
-        android:id="@+id/action_delete_games"
+        android:id="@+id/action_delete_songs"
         android:icon="@drawable/ic_delete_white_24dp"
         android:title="@string/delete_songs"
         app:showAsAction="ifRoom" />

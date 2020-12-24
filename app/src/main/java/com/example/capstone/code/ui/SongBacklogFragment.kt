@@ -64,8 +64,20 @@ class SongBacklogFragment : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        menu.findItem(R.id.action_delete_games).isVisible = true
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.findItem(R.id.action_delete_songs).isVisible = true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_delete_songs -> {
+                viewModel.deleteAllSongs()
+                return true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     // Observe the song list and when it changes, the list will be cleared, all the songs will be added and the songs will get sorted by the platform
