@@ -19,4 +19,5 @@
     <string name="undo">UNDO</string>
     <string name="btn_play_youtube_video">Play video</string>
     <string name="title_playback">Play song</string>
+    <string name="google_api_key">AIzaSyAhNZN7cTRE6LW5m61TjIA0Ol1L1IM1KKA</string>
 </resources>

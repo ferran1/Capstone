@@ -6,13 +6,16 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.capstone.R
 
-class MainActivity : AppCompatActivity() {
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerFragment;
+
+class MainActivity : AppCompatActivity()  {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

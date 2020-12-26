@@ -1,9 +1,12 @@
 package com.example.capstone.code.ui
 
+import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils.replace
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
@@ -26,7 +29,10 @@ class SongBacklogFragment : Fragment() {
 
     private val viewModel: SongViewModel by viewModels()
     private val songList = arrayListOf<Song>()
-    private val songBacklogAdapter = SongBacklogAdapter(songList)
+//    private val songBacklogAdapter = SongBacklogAdapter(songList)
+
+    private val songBacklogAdapter =
+        SongBacklogAdapter(songList, ::songItemClicked)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,6 +61,7 @@ class SongBacklogFragment : Fragment() {
         binding.fabAddSong.setOnClickListener {
             findNavController().navigate(R.id.action_songBacklogFragment_to_addSongFragment)
         }
+
 
         initializeRecyclerView()
 
@@ -100,6 +107,8 @@ class SongBacklogFragment : Fragment() {
             adapter = songBacklogAdapter
         }
 
+//        binding.rvSongs.
+
         createItemTouchHelperSwipe().attachToRecyclerView(binding.rvSongs)
     }
 
@@ -141,6 +150,23 @@ class SongBacklogFragment : Fragment() {
             }
         }
         return ItemTouchHelper(callback)
+    }
+
+    // This method gets called when a song gets clicked to open the URL belonging to the Song entity
+    private fun songItemClicked(songItem: Song) {
+
+        val builder = CustomTabsIntent.Builder()
+        // modify toolbar color
+        builder.setToolbarColor(ContextCompat.getColor(requireActivity(), R.color.black))
+        // add share button to overflow men
+        builder.addDefaultShareMenuItem()
+        // show website title
+        builder.setShowTitle(true)
+        builder.setExitAnimations(requireActivity(), android.R.anim.fade_in, android.R.anim.fade_out)
+
+        val customTabsIntent = builder.build()
+
+        customTabsIntent.launchUrl(requireActivity(), Uri.parse(songItem.url))
     }
 
 
