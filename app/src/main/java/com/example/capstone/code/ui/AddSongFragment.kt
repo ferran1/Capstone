@@ -3,7 +3,6 @@ package com.example.capstone.code.ui
 import android.annotation.SuppressLint
 import android.os.AsyncTask
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
@@ -39,6 +38,7 @@ class AddSongFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         requireActivity().title = getString(R.string.add_song)
+        menu.findItem(R.id.action_delete_songs).isVisible = false
 
         activity?.findViewById<Toolbar>(R.id.toolbar)!!.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -64,7 +64,7 @@ class AddSongFragment : Fragment() {
             songUrl.contains("youtube", ignoreCase = true) -> {
                 // If the URL is from Youtube, crawl the song name and artist from the Youtube in a background AsyncTask
                 youtubeSongUrl = songUrl // Save the url in a class variable because we want to later retrieve it in addYoutubeSong()
-                YoutubeAsyncTaskCrawler().execute(songUrl)
+                YoutubeAsyncTask().execute(songUrl)
             }
             songUrl.contains("spotify", ignoreCase = true) -> {
                 getSongDataFromPlatform(songUrl, "spotify")
@@ -128,16 +128,19 @@ class AddSongFragment : Fragment() {
     }
 
     @SuppressLint("StaticFieldLeak")
-    inner class YoutubeAsyncTaskCrawler : AsyncTask<String, Void?, String>() {
+    inner class YoutubeAsyncTask : AsyncTask<String, Void?, String>() {
 
         override fun doInBackground(vararg params: String): String {
 
             val url = params[0]
-//            val doc: Document = Jsoup.connect(params[0]).get()
+//            val doc: Document = Jsoup.connect(url).get()
+//            val nameAndArtist = doc.getElementsByClass("title style-scope ytd-video-primary-info-renderer")
+//            Log.d("TITLE", nameAndArtist[0].toString())
+//            val crawledNameAndArtist = nameAndArtist[0].toString()
 
-//            Log.d("test", url)
+            val crawledNameAndArtist = "Testie"
 
-            val crawledNameAndArtist = "Jason Derulo - Swag"
+            //Option 2 = use youtube api
 
             return crawledNameAndArtist
         }
@@ -149,33 +152,3 @@ class AddSongFragment : Fragment() {
         }
     }
 }
-
-// Web scraping example:
-
-//try {
-//    val url = "https://www.cinemaqatar.com/"
-//    val doc: Document = Jsoup.connect(url).get()
-//    val data: Elements = doc.select("span.thumbnail")
-//    val size: Int = data.size()
-//    Log.d("doc", "doc: $doc")
-//    Log.d("data", "data: $data")
-//    Log.d("size", "" + size)
-//    for (i in 0 until size) {
-//        val imgUrl: String = data.select("span.thumbnail")
-//            .select("img")
-//            .eq(i)
-//            .attr("src")
-//        val title: String = data.select("h4.gridminfotitle")
-//            .select("span")
-//            .eq(i)
-//            .text()
-//        val detailUrl: String = data.select("h4.gridminfotitle")
-//            .select("a")
-//            .eq(i)
-//            .attr("href")
-//        parseItems.add(ParseItem(imgUrl, title, detailUrl))
-//        Log.d("items", "img: $imgUrl . title: $title")
-//    }
-//} catch (e: IOException) {
-//    e.printStackTrace()
-//}

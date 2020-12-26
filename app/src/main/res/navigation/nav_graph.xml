@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_songBacklogFragment_to_addSongFragment"
             app:destination="@id/addSongFragment" />
+        <action
+            android:id="@+id/action_songBacklogFragment_to_playbackFragment"
+            app:destination="@id/playbackFragment" />
     </fragment>
     <fragment
         android:id="@+id/addSongFragment"
@@ -20,6 +23,14 @@
         android:label="AddSongFragment" >
         <action
             android:id="@+id/action_addSongFragment_to_songBacklogFragment"
+            app:destination="@id/songBacklogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/playbackFragment"
+        android:name="com.example.capstone.code.ui.PlaybackFragment"
+        android:label="PlaybackFragment" >
+        <action
+            android:id="@+id/action_playbackFragment_to_songBacklogFragment"
             app:destination="@id/songBacklogFragment" />
     </fragment>
 </navigation>

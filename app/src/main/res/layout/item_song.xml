@@ -38,13 +38,14 @@
             android:id="@+id/tv_artist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="0.5"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name"
+            app:layout_constraintVertical_bias="0.0"
             tools:text="Tiesto" />
 
         <TextView
@@ -52,13 +53,23 @@
             android:layout_width="wrap_content"
             android:layout_height="19dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="248dp"
             android:layout_marginBottom="8dp"
             android:textAlignment="viewEnd"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_name"
-            tools:text="Spotify" />
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="Youtube" />
+
+        <Button
+            android:id="@+id/btn_play_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/btn_play_youtube_video"
+            app:layout_constraintEnd_toEndOf="@+id/tv_name"
+            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>
