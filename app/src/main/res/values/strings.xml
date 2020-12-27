@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Faovurite songs</string>
+    <string name="app_name">Favourite songs</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -17,7 +17,5 @@
     <string name="incorrect_url_msg">Filled in URL is incorrect, please check the URL and try again</string>
     <string name="successfully_deleted_song">Successfully deleted the song</string>
     <string name="undo">UNDO</string>
-    <string name="btn_play_youtube_video">Play video</string>
-    <string name="title_playback">Play song</string>
-    <string name="google_api_key">AIzaSyAhNZN7cTRE6LW5m61TjIA0Ol1L1IM1KKA</string>
+    <string name="play_song">Play song</string>
 </resources>
