@@ -1,7 +1,5 @@
 package com.example.capstone.code.ui
 
-import android.annotation.SuppressLint
-import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -69,15 +67,16 @@ class AddSongFragment : Fragment() {
 
     // Insert the song into the database
     private fun addSong() {
+
         val songUrl: String = binding.etUrl.text.toString()
 
         // Check from which platform
         when {
             songUrl.contains("youtube", ignoreCase = true) -> {
-                // If the URL is from Youtube, crawl the song name and artist from the Youtube in a background AsyncTask
                 youtubeSongUrl =
                     songUrl // Save the url in a class variable because we want to later retrieve it in addYoutubeSong()
-                YoutubeAsyncTask().execute(songUrl)
+                getYoutubeSongInfo(songUrl)
+//                YoutubeAsyncTask().execute(songUrl)
             }
             songUrl.contains("spotify", ignoreCase = true) -> {
                 getSongDataFromPlatform(songUrl, "spotify")
@@ -121,16 +120,57 @@ class AddSongFragment : Fragment() {
 
     }
 
-    // Get the song name and artist from async task and add the Youtube song into the database
-    private fun addYoutubeSong(crawledNameAndArtist: String) {
+    // Get the Youtube song name and artist by executing a GET request to the Youtube Data API
+    private fun getYoutubeSongInfo(url: String) {
 
-        // TODO:
-        // Split the crawdledNameAndArtist String into 2 strings, the artist and the song
+        val videoId = url.substringAfter("=")
+
+        val APIRequestURL =
+            "$BASE_URL$videoId&key=$YOUTUBE_API_KEY"
+
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(requireActivity())
+
+        val request = JsonObjectRequest(Request.Method.GET, APIRequestURL, null, { response ->
+            try {
+
+                // Parse the JSON to get the title from the youtube video
+                val jsonArray = response.getJSONArray("items")
+
+                val jsonArraySnippet = jsonArray.getJSONObject(0).getJSONObject("snippet")
+
+                val songNameAndArtist = jsonArraySnippet.getString("title")
+
+                addYoutubeSong(songNameAndArtist)
+
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+        }, { error ->
+            error.printStackTrace()
+        })
+
+        queue?.add(request)
+
+    }
+
+    /**
+     * @param songNameAndArtist is the song name and artist name parsed from the youtube video
+     * Inserts the youtube song into the database
+     */
+    private fun addYoutubeSong(songNameAndArtist: String) {
+
+        val nameAndArtist = songNameAndArtist.split("-")
+
+        val artist = nameAndArtist[0]
+
+        // Remove unnecessary info from title: (Official Music video)
+        val songName = nameAndArtist[1].substringBefore("(")
 
         this.viewModel.insertSong(
             youtubeSongUrl,
-            crawledNameAndArtist,
-            crawledNameAndArtist,
+            songName,
+            artist,
             "Youtube"
         )
 
@@ -138,63 +178,31 @@ class AddSongFragment : Fragment() {
 
     }
 
-    @SuppressLint("StaticFieldLeak")
-    inner class YoutubeAsyncTask : AsyncTask<String, Void?, String>() {
-
-        override fun doInBackground(vararg params: String): String {
-
+//    @SuppressLint("StaticFieldLeak")
+//    inner class YoutubeAsyncTask : AsyncTask<String, Void?, String>() {
+//
+//        override fun doInBackground(vararg params: String): String {
+//
 //            val url = params[0]
-
-            // Use the Volley HTTP library to do an Youtube V3 API request to get the title and description from the Youtube video URL
-
-            val videoUrl = "https://www.youtube.com/watch?v=4BoBJbrSNs8"
-            val videoId = videoUrl.substringAfter("=")
-
-            val APIRequestURL =
-                "$BASE_URL$videoId&key=$YOUTUBE_API_KEY"
-
-            // Instantiate the RequestQueue.
-            val queue = Volley.newRequestQueue(requireActivity())
-
-            val request = JsonObjectRequest(Request.Method.GET, APIRequestURL, null, { response ->
-                try {
-
-                    // Parse the JSON to get the name and artist(s) from the youtube video
-                    val jsonArray = response.getJSONArray("items")
-
-                    val jsonArraySnippet = jsonArray.getJSONObject(0).getJSONObject("snippet")
-
-                    val songNameAndArtistYoutube = jsonArraySnippet.getString("title")
-
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }, { error ->
-                error.printStackTrace()
-            })
-
-            queue?.add(request)
-
-//            Log.d("PETER: ", songNameAndArtistYoutube)
-
+//
 //            val crawledNameAndArtist = videoTitle
-
-            val crawledNameAndArtist = "gang"
-
-            return crawledNameAndArtist
-        }
-
-
-        override fun onPostExecute(crawledNameAndArtist: String) {
-            super.onPostExecute(crawledNameAndArtist)
-
+//
+//            val crawledNameAndArtist = songNameAndArtist
+//
+//            return crawledNameAndArtist
+//        }
+//
+//        override fun onPostExecute(crawledNameAndArtist: String) {
+//            super.onPostExecute(crawledNameAndArtist)
+//
 //            Toast.makeText(
 //                context,
 //                binding.textView.text.toString(),
 //                Toast.LENGTH_LONG
 //            )
 //                .show()
-            addYoutubeSong(crawledNameAndArtist)
-        }
-    }
+//            addYoutubeSong(crawledNameAndArtist)
+//        }
+//    }
+
 }
