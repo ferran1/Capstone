@@ -87,7 +87,9 @@ class SongBacklogFragment : Fragment() {
         }
     }
 
-    // Observe the song list and when it changes, the list will be cleared, all the songs will be added and the songs will get sorted by the platform
+    /**
+     * Observe the song list and when it changes, the list will be cleared, all the songs will be added and the songs will get sorted by the platform
+     */
     private fun observeGameList() {
         viewModel.songList.observe(viewLifecycleOwner, { gamesList ->
             this@SongBacklogFragment.songList.clear()
@@ -152,7 +154,9 @@ class SongBacklogFragment : Fragment() {
         return ItemTouchHelper(callback)
     }
 
-    // This method gets called when a song gets clicked to open the URL belonging to the Song entity
+    /**
+     * This method gets called when a song gets clicked to open the URL belonging to the Song entity
+     */
     private fun songItemClicked(songItem: Song) {
 
         val builder = CustomTabsIntent.Builder()

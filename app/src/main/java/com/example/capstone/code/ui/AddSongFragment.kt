@@ -27,7 +27,6 @@ class AddSongFragment : Fragment() {
     private val viewModel: SongViewModel by viewModels()
 
     private lateinit var youtubeSongUrl: String
-//    private lateinit var songNameAndArtistYoutube: String
 
     // Api key for the Youtube api, key is configured in app/build.gradle -> buildtypes { debug {} }
     private val YOUTUBE_API_KEY = BuildConfig.ApiKey
@@ -55,17 +54,17 @@ class AddSongFragment : Fragment() {
         }
     }
 
-    // Setup the layout (view)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.fabSaveSong.setOnClickListener {
             addSong()
         }
-
     }
 
-    // Insert the song into the database
+    /**
+     * looks at which platform the song belongs to
+     */
     private fun addSong() {
 
         val songUrl: String = binding.etUrl.text.toString()
@@ -90,15 +89,6 @@ class AddSongFragment : Fragment() {
             }
         }
 
-
-//        val songName = "Save Your Tears"
-//        val artist = "The Weeknd"
-//        val platform = "Youtube"
-//
-//        this.viewModel.insertSong(songUrl, songName, artist, platform)
-//        findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
-
-
 // ------------------------------------------------------- song link examples:
         /*
         Youtube:
@@ -120,7 +110,9 @@ class AddSongFragment : Fragment() {
 
     }
 
-    // Get the Youtube song name and artist by executing a GET request to the Youtube Data API
+    /**
+     * Get the Youtube song name and artist by executing a GET request to the Youtube Data API
+     */
     private fun getYoutubeSongInfo(url: String) {
 
         val videoId = url.substringAfter("=")
