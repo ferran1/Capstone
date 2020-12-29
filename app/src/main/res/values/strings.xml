@@ -3,7 +3,9 @@
     <string name="add_song">Add new favourite song</string>
     <string name="add_song_title">add song button</string>
     <string name="delete_songs">Delete songs</string>
-    <string name="hint_title">Song URL (From Spotify, Soundcloud or Youtube)</string>
+    <string name="hint_title_url">Song URL (From Spotify, Soundcloud or Youtube)</string>
+    <string name="hint_title_name">Song name (Only needed for Soundcloud)</string>
+    <string name="hint_title_artist">Artist (Only needed for Soundcloud)</string>
     <string name="save">Save</string>
     <string name="incorrect_url_msg">Filled in URL is incorrect, please check the URL and try again</string>
     <string name="successfully_deleted_song">Successfully deleted the song</string>
