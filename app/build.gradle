@@ -22,12 +22,16 @@ android {
         debug {
             buildConfigField 'String', "ApiKey", YOUTUBE_API_KEY
             buildConfigField 'String', "SpotifyClientDetails", SPOTIFY_BASE64_CLIENT_DETAILS
+            buildConfigField 'String', "SpotifyClientId", SPOTIFY_CLIENT_ID
+            buildConfigField 'String', "SpotifyClientSecret", SPOTIFY_CLIENT_SECRET
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField 'String', "ApiKey", YOUTUBE_API_KEY
             buildConfigField 'String', "SpotifyClientDetails", SPOTIFY_BASE64_CLIENT_DETAILS
+            buildConfigField 'String', "SpotifyClientId", SPOTIFY_CLIENT_ID
+            buildConfigField 'String', "SpotifyClientSecret", SPOTIFY_CLIENT_SECRET
         }
     }
     compileOptions {

@@ -1,6 +1,7 @@
 package com.example.capstone.code.ui
 
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.*
 import android.widget.Toast
@@ -8,22 +9,22 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.android.volley.*
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.capstone.BuildConfig
 import com.example.capstone.R
-import com.example.capstone.code.dao.SongDao
-import com.example.capstone.code.model.Song
+import com.example.capstone.code.IVolley
 import com.example.capstone.code.repository.SongRepository
 import com.example.capstone.code.viewmodel.SongViewModel
 import com.example.capstone.databinding.FragmentAddSongBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONException
+
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -34,16 +35,19 @@ class AddSongFragment : Fragment() {
     private val viewModel: SongViewModel by viewModels()
     private lateinit var songRepository: SongRepository
 
+    private val iVolley: IVolley? = null
+
     private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private lateinit var songUrl: String
 
     // Api key for the Youtube api, key is configured in app/build.gradle -> buildtypes { debug {} }
     private val YOUTUBE_API_KEY = BuildConfig.ApiKey
-    private val YOUTUBE_BASE_URL =
-        "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id="
+    private val YOUTUBE_BASE_URL = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id="
 
     private val SPOTIFY_BASE64_CLIENTDETAILS = BuildConfig.SpotifyClientDetails
+    private val SPOTIFY_CLIENT_ID = BuildConfig.SpotifyClientId
+    private val SPOTIFY_CLIENT_SECRET = BuildConfig.SpotifyClientSecret
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -83,64 +87,53 @@ class AddSongFragment : Fragment() {
 
         val songUrl: String = binding.etUrl.text.toString()
 
-        mainScope.launch {
-            withContext(Dispatchers.IO) {
-                // Song URL already exists if getCount returns an Int higher than 0
-                if (songRepository.getCount(songUrl) > 0) {
-//                    Toast.makeText(context, getString(R.string.song_exists_msg), Toast.LENGTH_LONG)
-//                        .show()
-                    Log.d("Exists", "Song already exists in the database")
-                }
-            }
-        }
-
-            when {
-                songUrl.contains("youtube", ignoreCase = true) -> {
-                    this.songUrl =
-                        songUrl // Save the url in a class variable because we want to later access it in addSong()
-                    getSongInfo(songUrl, "youtube")
+        when {
+            songUrl.contains("youtube", ignoreCase = true) -> {
+                this.songUrl =
+                    songUrl // Save the url in a class variable because we want to later access it in addSong()
+                getSongInfo(songUrl, "youtube")
 //                YoutubeAsyncTask().execute(songUrl)
-                }
-                songUrl.contains("spotify", ignoreCase = true) -> {
-                    this.songUrl = songUrl
-                    getSongInfo(songUrl, "spotify")
-                }
-                songUrl.contains("soundcloud", ignoreCase = true) -> {
+            }
+            songUrl.contains("spotify", ignoreCase = true) -> {
+                this.songUrl = songUrl
+                getSongInfo(songUrl, "spotify")
+            }
+            songUrl.contains("soundcloud", ignoreCase = true) -> {
 
-                    val songName = binding.etName.text.toString()
-                    val artist = binding.etArtist.text.toString()
+                val songName = binding.etName.text.toString()
+                val artist = binding.etArtist.text.toString()
 
-                    this.viewModel.insertSong(songUrl, songName, artist, "Soundcloud")
+                this.viewModel.insertSong(songUrl, songName, artist, "Soundcloud")
 
-                    findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
+                findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
 
-                }
-                else -> {
-                    Toast.makeText(
-                        context,
-                        getString(R.string.incorrect_url_msg),
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
+            }
+            else -> {
+                Toast.makeText(
+                    context,
+                    getString(R.string.incorrect_url_msg),
+                    Toast.LENGTH_LONG
+                )
+                    .show()
             }
         }
+    }
 
 // ------------------------------------------------------- song link examples:
-        /*
-        Youtube:
-        https://www.youtube.com/watch?v=u6lihZAcy4s
+    /*
+    Youtube:
+    https://www.youtube.com/watch?v=u6lihZAcy4s
 
-        Spotify:
-        URI (Not sure if URI or link is needed for the Spotify API:
-        spotify:track:5QO79kh1waicV47BqGRL3
-        Song link example:
-        https://open.spotify.com/track/5QO79kh1waicV47BqGRL3g?si=8hB3eXJoTbalyA3yK9gl-A
+    Spotify:
+    URI (Not sure if URI or link is needed for the Spotify API:
+    spotify:track:5QO79kh1waicV47BqGRL3
+    Song link example:
+    https://open.spotify.com/track/5QO79kh1waicV47BqGRL3g?si=8hB3eXJoTbalyA3yK9gl-A
 
-        Soundcloud:
-        https://soundcloud.com/theweeknd/save-your-tears
+    Soundcloud:
+    https://soundcloud.com/theweeknd/save-your-tears
 
-        */
+    */
 
 
     /**
@@ -178,57 +171,44 @@ class AddSongFragment : Fragment() {
 
         } else if (platform == "spotify") {
 
-            // Obtain an access token, POST request to:
+            // Obtain an access token to get authorized for the Spotify Web API
             val APIRequestURL = "https://accounts.spotify.com/api/token"
-
-            // Body must be encoded in application/x-www-form-urlencoded
-
-            // Request body parameter:
-            // grant type
-            // Value:
-            // Set to client_credentials
-
-            // Header parameter
-            // Authorization
-            // Base 64 encoded string that contains the client ID and client secret key. The field must have the format: Authorization: Basic <base64 encoded client_id:client_secret>
-
-            //curl -X "POST" -H "Authorization: Basic ZjM4ZjAw...WY0MzE=" -d grant_type=client_credentials https://accounts.spotify.com/api/token
-
-            // Header parameter of the POST request must contain this ( -H Authorization: " ) :
-            val authorizationHeader = "Basic $SPOTIFY_BASE64_CLIENTDETAILS"
-
-            Log.d("Auth header", authorizationHeader)
 
             val queue = Volley.newRequestQueue(requireActivity())
 
-            val params = HashMap<String, String>()
-            params["Authorization"] = authorizationHeader // Header parameter
-            params["grant-type"] = "client_credentials" // Request body parameter
+            val postRequest = object : StringRequest(
+                Method.POST, APIRequestURL,
+                Response.Listener { response ->
+                    Log.d("Access token: ", response.toString())
 
-            val stringRequest = StringRequest(Request.Method.POST, url,
-                { response ->
-                    val accessToken = response
-                },
-                { Log.d("Error", "Something went wrong trying to obtain an access token") })
+                    val accessToken = response.toString()
 
-            queue?.add(stringRequest)
+                    iVolley?.onResponse(response.toString())
+                }, Response.ErrorListener { error -> iVolley!!.onResponse((error.message!!)) }) {
 
+                override fun getBodyContentType(): String {
+                    return "application/x-www-form-urlencoded; charset=UTF-8"
+                }
 
-//
-//            val stringRequest = StringRequest(Request.Method.POST, APIRequestURL, null, object:
-//                Response.Listener<String>,
-//                Response.ErrorListener {
-//
-//                override fun onResponse(response:String) {
-//                    Log.d("Access token:", response)
-//                }
-//
-//                override fun onErrorResponse(error: VolleyError?) {
-//                    Log.d("Something went wrong", error.toString())
-//                }
-//
-//            })
+                @Throws(AuthFailureError::class)
+                override fun getHeaders(): Map<String, String> {
+                    val credentials = "$SPOTIFY_CLIENT_ID:$SPOTIFY_CLIENT_SECRET"
+                    val base64EncodedCredentials: String =
+                        Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
 
+                    val headers: MutableMap<String, String> = HashMap()
+                    headers["Authorization"] = "Basic $base64EncodedCredentials" // Header authorization parameter
+                    return headers
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val params = HashMap<String, String>()
+                    params["grant_type"] = "client_credentials" // Request body parameter
+                    return params
+                }
+            }
+
+            queue?.add(postRequest)
 
         } else { // Soundcloud
 
