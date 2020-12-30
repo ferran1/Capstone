@@ -19,6 +19,10 @@ class SongRepository(context: Context) {
         return songDao.getAllSongs()
     }
 
+    suspend fun getCount(url: String): Int {
+        return songDao.count(url)
+    }
+
     suspend fun insertSong(song: Song) {
         songDao.insertSong(song)
     }

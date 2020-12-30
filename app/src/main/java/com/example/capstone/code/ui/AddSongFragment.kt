@@ -14,8 +14,15 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.capstone.BuildConfig
 import com.example.capstone.R
+import com.example.capstone.code.dao.SongDao
+import com.example.capstone.code.model.Song
+import com.example.capstone.code.repository.SongRepository
 import com.example.capstone.code.viewmodel.SongViewModel
 import com.example.capstone.databinding.FragmentAddSongBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONException
 
 /**
@@ -24,15 +31,17 @@ import org.json.JSONException
 class AddSongFragment : Fragment() {
 
     private lateinit var binding: FragmentAddSongBinding
-
     private val viewModel: SongViewModel by viewModels()
+    private lateinit var songRepository: SongRepository
+
+    private val mainScope = CoroutineScope(Dispatchers.Main)
 
     private lateinit var songUrl: String
 
     // Api key for the Youtube api, key is configured in app/build.gradle -> buildtypes { debug {} }
     private val YOUTUBE_API_KEY = BuildConfig.ApiKey
-
-    private val YOUTUBE_BASE_URL = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id="
+    private val YOUTUBE_BASE_URL =
+        "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id="
 
     private val SPOTIFY_BASE64_CLIENTDETAILS = BuildConfig.SpotifyClientDetails
 
@@ -60,41 +69,60 @@ class AddSongFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        songRepository = SongRepository(requireContext())
+
         binding.fabSaveSong.setOnClickListener {
-            checkSongUrlPlatform()
+            checkSongUrl()
         }
     }
 
     /**
      * looks at which platform the song belongs to
      */
-    private fun checkSongUrlPlatform() {
+    private fun checkSongUrl() {
 
         val songUrl: String = binding.etUrl.text.toString()
 
-        when {
-            songUrl.contains("youtube", ignoreCase = true) -> {
-                this.songUrl = songUrl // Save the url in a class variable because we want to later access it in addSong()
-                getSongInfo(songUrl, "youtube")
+        mainScope.launch {
+            withContext(Dispatchers.IO) {
+                // Song URL already exists if getCount returns an Int higher than 0
+                if (songRepository.getCount(songUrl) > 0) {
+//                    Toast.makeText(context, getString(R.string.song_exists_msg), Toast.LENGTH_LONG)
+//                        .show()
+                    Log.d("Exists", "Song already exists in the database")
+                }
+            }
+        }
+
+            when {
+                songUrl.contains("youtube", ignoreCase = true) -> {
+                    this.songUrl =
+                        songUrl // Save the url in a class variable because we want to later access it in addSong()
+                    getSongInfo(songUrl, "youtube")
 //                YoutubeAsyncTask().execute(songUrl)
-            }
-            songUrl.contains("spotify", ignoreCase = true) -> {
-                this.songUrl = songUrl
-                getSongInfo(songUrl, "spotify")
-            }
-            songUrl.contains("soundcloud", ignoreCase = true) -> {
+                }
+                songUrl.contains("spotify", ignoreCase = true) -> {
+                    this.songUrl = songUrl
+                    getSongInfo(songUrl, "spotify")
+                }
+                songUrl.contains("soundcloud", ignoreCase = true) -> {
 
-                val songName = binding.etName.text.toString()
-                val artist = binding.etArtist.text.toString()
+                    val songName = binding.etName.text.toString()
+                    val artist = binding.etArtist.text.toString()
 
-                this.viewModel.insertSong(songUrl, songName, artist, "soundcloud")
+                    this.viewModel.insertSong(songUrl, songName, artist, "Soundcloud")
 
-                findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
+                    findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
 
-            }
-            else -> {
-                Toast.makeText(context, getString(R.string.incorrect_url_msg), Toast.LENGTH_LONG)
-                    .show()
+                }
+                else -> {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.incorrect_url_msg),
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
             }
         }
 
@@ -113,7 +141,7 @@ class AddSongFragment : Fragment() {
         https://soundcloud.com/theweeknd/save-your-tears
 
         */
-    }
+
 
     /**
      * Get the song name and artist by executing a GET request to the API depending on the platform of the song
@@ -122,31 +150,31 @@ class AddSongFragment : Fragment() {
 
         if (platform == "youtube") {
 
-        val videoId = url.substringAfter("=")
-        val APIRequestURL =
-            "$YOUTUBE_BASE_URL$videoId&key=$YOUTUBE_API_KEY"
+            val videoId = url.substringAfter("=")
+            val APIRequestURL =
+                "$YOUTUBE_BASE_URL$videoId&key=$YOUTUBE_API_KEY"
 
-        // Instantiate the RequestQueue.
-        val queue = Volley.newRequestQueue(requireActivity())
-        val request = JsonObjectRequest(Request.Method.GET, APIRequestURL, null, { response ->
-            try {
+            // Instantiate the RequestQueue.
+            val queue = Volley.newRequestQueue(requireActivity())
+            val request = JsonObjectRequest(Request.Method.GET, APIRequestURL, null, { response ->
+                try {
 
-                // Parse the JSON to get the title from the youtube video
-                val jsonArray = response.getJSONArray("items")
+                    // Parse the JSON to get the title from the youtube video
+                    val jsonArray = response.getJSONArray("items")
 
-                val jsonArraySnippet = jsonArray.getJSONObject(0).getJSONObject("snippet")
+                    val jsonArraySnippet = jsonArray.getJSONObject(0).getJSONObject("snippet")
 
-                val songNameAndArtist = jsonArraySnippet.getString("title")
+                    val songNameAndArtist = jsonArraySnippet.getString("title")
 
-                addYoutubeSong(songNameAndArtist)
+                    addYoutubeSong(songNameAndArtist)
 
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-        }, { error ->
-            error.printStackTrace()
-        })
-        queue?.add(request)
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            }, { error ->
+                error.printStackTrace()
+            })
+            queue?.add(request)
 
         } else if (platform == "spotify") {
 
@@ -173,7 +201,7 @@ class AddSongFragment : Fragment() {
 
             val queue = Volley.newRequestQueue(requireActivity())
 
-            val params = HashMap<String,String>()
+            val params = HashMap<String, String>()
             params["Authorization"] = authorizationHeader // Header parameter
             params["grant-type"] = "client_credentials" // Request body parameter
 
@@ -181,7 +209,7 @@ class AddSongFragment : Fragment() {
                 { response ->
                     val accessToken = response
                 },
-                { Log.d("Error", "Something went wrong trying to obtain an access token" ) })
+                { Log.d("Error", "Something went wrong trying to obtain an access token") })
 
             queue?.add(stringRequest)
 
@@ -202,7 +230,6 @@ class AddSongFragment : Fragment() {
 //            })
 
 
-
         } else { // Soundcloud
 
         }
@@ -219,15 +246,23 @@ class AddSongFragment : Fragment() {
 
         val artist = nameAndArtist[0]
 
-        // Remove unnecessary info from title: (Official Music video)
-        val songName = nameAndArtist[1].substringBefore("(")
-
-        this.viewModel.insertSong(
-            songUrl,
-            songName,
-            artist,
-            "Youtube"
-        )
+        // Remove unnecessary info from title, for example: (Official Music video)
+        if (nameAndArtist[1].contains("(")) {
+            val songName = nameAndArtist[1].substringBefore("(")
+            this.viewModel.insertSong(
+                songUrl,
+                songName,
+                artist,
+                "Youtube"
+            )
+        } else {
+            this.viewModel.insertSong(
+                songUrl,
+                nameAndArtist[1],
+                artist,
+                "Youtube"
+            )
+        }
 
         findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
 

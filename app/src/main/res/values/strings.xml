@@ -11,4 +11,5 @@
     <string name="successfully_deleted_song">Successfully deleted the song</string>
     <string name="undo">UNDO</string>
     <string name="play_song">Play song</string>
+    <string name="song_exists_msg">This song already exists. Please try a different URL.</string>
 </resources>
