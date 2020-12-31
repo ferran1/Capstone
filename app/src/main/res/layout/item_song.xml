@@ -55,9 +55,11 @@
             android:layout_marginStart="16dp"
             android:layout_marginBottom="4dp"
             android:textAlignment="viewEnd"
+            android:drawablePadding="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="Youtube" />
+            tools:text="Youtube"
+            app:drawableEndCompat="@drawable/ic_youtube" />
 
         <Button
             android:id="@+id/btn_play_song"

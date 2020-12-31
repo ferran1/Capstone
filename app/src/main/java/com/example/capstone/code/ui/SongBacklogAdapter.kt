@@ -1,5 +1,6 @@
 package com.example.capstone.code.ui
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +11,14 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.example.capstone.R
 import com.example.capstone.code.model.Song
-import com.example.capstone.databinding.ItemSongBinding
 
-class SongBacklogAdapter(private val songList: List<Song>, val clickListener: (Song) -> Unit)
-    : RecyclerView.Adapter<SongBacklogAdapter.ViewHolder>() {
+class SongBacklogAdapter(private val songList: List<Song>, val clickListener: (Song) -> Unit) :
+    RecyclerView.Adapter<SongBacklogAdapter.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongBacklogAdapter.ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): SongBacklogAdapter.ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.item_song, parent, false)
         )
@@ -33,10 +36,19 @@ class SongBacklogAdapter(private val songList: List<Song>, val clickListener: (S
             itemView.findViewById<TextView>(R.id.tv_artist).text = song.artist
             itemView.findViewById<TextView>(R.id.tv_platform).text = song.platform
             itemView.findViewById<CardView>(R.id.cardView).setOnClickListener {
-                    clickListener(song)
+                clickListener(song)
             }
 
-            if (song.platform == "Youtube"){
+            if (song.platform == "Youtube") {
+                itemView.findViewById<TextView>(R.id.tv_platform).setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_youtube, 0)
+                itemView.findViewById<Button>(R.id.btn_play_song).text = "Play video"
+            }
+            if (song.platform == "Soundcloud") {
+                itemView.findViewById<TextView>(R.id.tv_platform).setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_soundcloud, 0)
+                itemView.findViewById<Button>(R.id.btn_play_song).isVisible = false
+            }
+            if (song.platform == "Spotify") {
+                itemView.findViewById<TextView>(R.id.tv_platform).setCompoundDrawablesRelativeWithIntrinsicBounds(0, 0, R.drawable.ic_spotify, 0)
                 itemView.findViewById<Button>(R.id.btn_play_song).isVisible = false
             }
         }

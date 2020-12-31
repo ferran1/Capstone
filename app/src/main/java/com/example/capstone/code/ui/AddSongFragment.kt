@@ -45,7 +45,6 @@ class AddSongFragment : Fragment() {
     private val YOUTUBE_API_KEY = BuildConfig.ApiKey
     private val YOUTUBE_BASE_URL = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id="
 
-    private val SPOTIFY_BASE64_CLIENTDETAILS = BuildConfig.SpotifyClientDetails
     private val SPOTIFY_CLIENT_ID = BuildConfig.SpotifyClientId
     private val SPOTIFY_CLIENT_SECRET = BuildConfig.SpotifyClientSecret
 
@@ -91,12 +90,12 @@ class AddSongFragment : Fragment() {
 
         when {
             songUrl.contains("youtube", ignoreCase = true) -> {
-                getSongInfo(songUrl, "youtube")
+                getSongInfo(songUrl, "Youtube")
 //                YoutubeAsyncTask().execute(songUrl)
             }
             songUrl.contains("spotify", ignoreCase = true) -> {
                 this.songUrl = songUrl
-                getSongInfo(songUrl, "spotify")
+                getSongInfo(songUrl, "Spotify")
             }
             songUrl.contains("soundcloud", ignoreCase = true) -> {
 
@@ -141,105 +140,109 @@ class AddSongFragment : Fragment() {
      */
     private fun getSongInfo(url: String, platform: String) {
 
-        if (platform == "youtube") {
+        when (platform) {
+            "Youtube" -> {
 
-            val videoId = url.substringAfter("=")
-            val APIRequestURL =
-                "$YOUTUBE_BASE_URL$videoId&key=$YOUTUBE_API_KEY"
+                val videoId = url.substringAfter("=")
+                val APIRequestURL =
+                    "$YOUTUBE_BASE_URL$videoId&key=$YOUTUBE_API_KEY"
 
-            // Instantiate the RequestQueue.
-            val queue = Volley.newRequestQueue(requireActivity())
-            val request = JsonObjectRequest(Request.Method.GET, APIRequestURL, null, { response ->
-                try {
+                // Instantiate the RequestQueue.
+                val queue = Volley.newRequestQueue(requireActivity())
+                val request = JsonObjectRequest(Request.Method.GET, APIRequestURL, null, { response ->
+                    try {
 
-                    // Parse the JSON to get the title from the youtube video
-                    val jsonArray = response.getJSONArray("items")
+                        // Parse the JSON to get the title from the youtube video
+                        val jsonArray = response.getJSONArray("items")
 
-                    val jsonArraySnippet = jsonArray.getJSONObject(0).getJSONObject("snippet")
+                        val jsonArraySnippet = jsonArray.getJSONObject(0).getJSONObject("snippet")
 
-                    val songNameAndArtist = jsonArraySnippet.getString("title")
+                        val songNameAndArtist = jsonArraySnippet.getString("title")
 
-                    addSong(songNameAndArtist, "youtube")
+                        addSong(songNameAndArtist, "Youtube")
 
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }, { error ->
-                error.printStackTrace()
-            })
-            queue?.add(request)
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }, { error ->
+                    error.printStackTrace()
+                })
+                queue?.add(request)
 
-        } else if (platform == "spotify") {
+            }
+            "Spotify" -> {
 
-            // Obtain an access token to get authorized for the Spotify Web API
-            val APIRequestURL = "https://accounts.spotify.com/api/token"
+                // Obtain an access token to get authorized for the Spotify Web API
+                val APIRequestURL = "https://accounts.spotify.com/api/token"
 
-            val queue = Volley.newRequestQueue(requireActivity())
+                val queue = Volley.newRequestQueue(requireActivity())
 
-            val postRequest = object : StringRequest(
-                Method.POST, APIRequestURL,
-                Response.Listener { response ->
+                val postRequest = object : StringRequest(
+                    Method.POST, APIRequestURL,
+                    Response.Listener { response ->
 
-                    // Get access token from the JSON response
-                    val accessToken = response.toString().substring(17, 100)
+                        // Get access token from the JSON response
+                        val accessToken = response.toString().substring(17, 100)
 
-                    Log.d("PARSED TOKEN", accessToken)
+                        Log.d("PARSED TOKEN", accessToken)
 
-                    // Execute a GET request to retrieve the song name and artist from the API
-                    val songId = songUrl.substring(31, 53)
-                    val GETrequestURL = "https://api.spotify.com/v1/tracks/$songId"
-                    val secondQueue = Volley.newRequestQueue(requireActivity())
+                        // Execute a GET request to retrieve the song name and artist from the API
+                        val songId = songUrl.substring(31, 53)
+                        val GETrequestURL = "https://api.spotify.com/v1/tracks/$songId"
+                        val secondQueue = Volley.newRequestQueue(requireActivity())
 
-                    val getRequest = object : StringRequest ( // Use StringRequest because getheaders() is unavailable with JsonObjectRequest
-                        Method.GET, GETrequestURL,
-                        Response.Listener { response ->
+                        val getRequest = object : StringRequest ( // Use StringRequest because getheaders() is unavailable with JsonObjectRequest
+                            Method.GET, GETrequestURL,
+                            Response.Listener { response ->
 
-                            Log.d("SPOTIFY TRACK RESPONSE ", response.toString())
+                                Log.d("SPOTIFY TRACK RESPONSE ", response.toString())
 
-                            iVolley?.onResponse(response.toString())
-                        }, Response.ErrorListener { error -> iVolley!!.onResponse((error.message!!)) }) {
+                                iVolley?.onResponse(response.toString())
+                            }, Response.ErrorListener { error -> iVolley!!.onResponse((error.message!!)) }) {
 
 
-                        @Throws(AuthFailureError::class)
-                        override fun getHeaders(): Map<String, String> {
-                            val headers: MutableMap<String, String> = HashMap()
-                            headers["Authorization"] = "Bearer $accessToken" // Header authorization parameter
-                            return headers
+                            @Throws(AuthFailureError::class)
+                            override fun getHeaders(): Map<String, String> {
+                                val headers: MutableMap<String, String> = HashMap()
+                                headers["Authorization"] = "Bearer $accessToken" // Header authorization parameter
+                                return headers
+                            }
                         }
+
+                        secondQueue?.add(getRequest)
+
+    //                    AddSpotifySong(accessToken)
+                        iVolley?.onResponse(response.toString())
+                    }, Response.ErrorListener { error -> iVolley!!.onResponse((error.message!!)) }) {
+
+                    override fun getBodyContentType(): String {
+                        return "application/x-www-form-urlencoded; charset=UTF-8"
                     }
 
-                    secondQueue?.add(getRequest)
+                    @Throws(AuthFailureError::class)
+                    override fun getHeaders(): Map<String, String> {
+                        val credentials = "$SPOTIFY_CLIENT_ID:$SPOTIFY_CLIENT_SECRET"
+                        val base64EncodedCredentials: String =
+                            Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
 
-//                    AddSpotifySong(accessToken)
-                    iVolley?.onResponse(response.toString())
-                }, Response.ErrorListener { error -> iVolley!!.onResponse((error.message!!)) }) {
+                        val headers: MutableMap<String, String> = HashMap()
+                        headers["Authorization"] = "Basic $base64EncodedCredentials" // Header authorization parameter
+                        return headers
+                    }
 
-                override fun getBodyContentType(): String {
-                    return "application/x-www-form-urlencoded; charset=UTF-8"
+                    override fun getParams(): MutableMap<String, String> {
+                        val params = HashMap<String, String>()
+                        params["grant_type"] = "client_credentials" // Request body parameter
+                        return params
+                    }
                 }
 
-                @Throws(AuthFailureError::class)
-                override fun getHeaders(): Map<String, String> {
-                    val credentials = "$SPOTIFY_CLIENT_ID:$SPOTIFY_CLIENT_SECRET"
-                    val base64EncodedCredentials: String =
-                        Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+                queue?.add(postRequest)
 
-                    val headers: MutableMap<String, String> = HashMap()
-                    headers["Authorization"] = "Basic $base64EncodedCredentials" // Header authorization parameter
-                    return headers
-                }
-
-                override fun getParams(): MutableMap<String, String> {
-                    val params = HashMap<String, String>()
-                    params["grant_type"] = "client_credentials" // Request body parameter
-                    return params
-                }
             }
+            "Soundcloud" -> {
 
-            queue?.add(postRequest)
-
-        } else { // Soundcloud
-
+            }
         }
     }
 
@@ -249,34 +252,35 @@ class AddSongFragment : Fragment() {
      */
     private fun addSong(songNameAndArtist: String, platform: String) {
 
-        if (platform == "youtube") {
+        when (platform) {
+            "Youtube" -> {
 
-            // TODO: error handling, check if youtube song has a "-" in the title
-            val nameAndArtist = songNameAndArtist.split("-")
+                // TODO: error handling, check if youtube song has a "-" in the title
+                val nameAndArtist = songNameAndArtist.split("-")
 
-            val artist = nameAndArtist[0]
+                val artist = nameAndArtist[0]
 
-            // Remove unnecessary info from title, for example: (Official Music video)
-            if (nameAndArtist[1].contains("(")) {
-                val songName = nameAndArtist[1].substringBefore("(")
-                this.viewModel.insertSong(
-                    songUrl,
-                    songName,
-                    artist,
-                    "Youtube"
-                )
-            } else {
-                this.viewModel.insertSong(
-                    songUrl,
-                    nameAndArtist[1],
-                    artist,
-                    "Youtube"
-                )
+                // Remove unnecessary info from title, for example: (Official Music video)
+                if (nameAndArtist[1].contains("(")) {
+                    val songName = nameAndArtist[1].substringBefore("(")
+                    this.viewModel.insertSong(
+                        songUrl,
+                        songName,
+                        artist,
+                        "Youtube"
+                    )
+                } else {
+                    this.viewModel.insertSong(
+                        songUrl,
+                        nameAndArtist[1],
+                        artist,
+                        "Youtube"
+                    )
+                }
             }
-        } else if (platform == "spotify") {
+            "Spotify" -> {
 
-        } else {
-
+            }
         }
 
         findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
