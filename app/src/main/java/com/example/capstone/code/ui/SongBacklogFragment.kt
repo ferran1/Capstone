@@ -2,13 +2,12 @@ package com.example.capstone.code.ui
 
 import android.net.Uri
 import android.os.Bundle
-import android.text.TextUtils.replace
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -19,6 +18,11 @@ import com.example.capstone.code.model.Song
 import com.example.capstone.code.viewmodel.SongViewModel
 import com.example.capstone.databinding.FragmentSongBacklogBinding
 import com.google.android.material.snackbar.Snackbar
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -39,6 +43,8 @@ class SongBacklogFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
+
+        container?.removeAllViews()
 
         binding = FragmentSongBacklogBinding.inflate(layoutInflater)
         return binding.root
@@ -61,6 +67,27 @@ class SongBacklogFragment : Fragment() {
         binding.fabAddSong.setOnClickListener {
             findNavController().navigate(R.id.action_songBacklogFragment_to_addSongFragment)
         }
+
+//        val youtubePlayerView: YouTubePlayerView = binding.youtubePlayerView
+//        lifecycle.addObserver(youtubePlayerView)
+//
+//        youtubePlayerView.addYouTubePlayerListener(object: AbstractYouTubePlayerListener() {
+//
+//            override fun onReady(youTubePlayer: YouTubePlayer) {
+//                super.onReady(youTubePlayer)
+//
+//                val id = "y3bW3H95NMw"
+//
+//                Log.d("ID IS ", id)
+//                youTubePlayer.loadVideo(id, 0F)
+//
+//            }
+//        })
+
+//        youtubePlayerView.addYoutubePlayerListener(object:AbstractYoutubePlayerListener()) {
+//
+//        })
+//        youTubePlayerView.initialize(listener: YouTubePlayerListener)
 
 
         initializeRecyclerView()
@@ -166,7 +193,11 @@ class SongBacklogFragment : Fragment() {
         builder.addDefaultShareMenuItem()
         // show website title
         builder.setShowTitle(true)
-        builder.setExitAnimations(requireActivity(), android.R.anim.fade_in, android.R.anim.fade_out)
+        builder.setExitAnimations(
+            requireActivity(),
+            android.R.anim.fade_in,
+            android.R.anim.fade_out
+        )
 
         val customTabsIntent = builder.build()
 

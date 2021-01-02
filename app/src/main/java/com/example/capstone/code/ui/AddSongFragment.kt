@@ -117,23 +117,6 @@ class AddSongFragment : Fragment() {
         }
     }
 
-// ------------------------------------------------------- song link examples:
-    /*
-    Youtube:
-    https://www.youtube.com/watch?v=u6lihZAcy4s
-
-    Spotify:
-    URI:
-    spotify:track:3dp4LGJNWdMGqF2aPeyiwl
-
-    https://open.spotify.com/track/3dp4LGJNWdMGqF2aPeyiwl?si=yT66QQwbTxqZJ_poAsj4pQ
-
-    Soundcloud:
-    https://soundcloud.com/theweeknd/save-your-tears
-
-    */
-
-
     /**
      * Get the song name and artist by executing a GET request to the API depending on the platform of the song
      */

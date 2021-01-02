@@ -18,8 +18,15 @@ class PlaybackFragment: Fragment() {
     ): View? {
         setHasOptionsMenu(true)
 
+        container?.removeAllViews()
+
         binding = FragmentPlaybackBinding.inflate(layoutInflater)
         return binding.root
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.findItem(R.id.action_delete_songs).isVisible = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -27,11 +34,16 @@ class PlaybackFragment: Fragment() {
         requireActivity().title = getString(R.string.play_song)
 
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-    }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu.findItem(R.id.action_delete_songs).isVisible = false
+        // Switch back to songBacklog fragment
+        binding.button.setOnClickListener { v ->
+            val activity = v!!.context as AppCompatActivity
+            val songBacklogFragment = SongBacklogFragment()
+            activity.supportFragmentManager.beginTransaction()
+                .replace(R.id.playbackFragment, songBacklogFragment).addToBackStack(null)
+                .commit()
+        }
+
     }
 
 
