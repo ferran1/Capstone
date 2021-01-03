@@ -68,6 +68,10 @@ class SongBacklogFragment : Fragment() {
             findNavController().navigate(R.id.action_songBacklogFragment_to_addSongFragment)
         }
 
+        binding.btnHowItWorks.setOnClickListener {
+            findNavController().navigate(R.id.action_songBacklogFragment_to_howItWorksFragment)
+        }
+
 //        val youtubePlayerView: YouTubePlayerView = binding.youtubePlayerView
 //        lifecycle.addObserver(youtubePlayerView)
 //

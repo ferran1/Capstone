@@ -40,11 +40,9 @@ class AddSongFragment : Fragment() {
 
     private val iVolley: IVolley? = null
 
-    private val mainScope = CoroutineScope(Dispatchers.Main)
-
     private lateinit var songUrl: String
 
-    // Api key for the Youtube api, key is configured in app/build.gradle -> buildtypes { debug {} }
+    // API key for the Youtube API, key is configured in app/build.gradle -> buildtypes { debug {} }
     private val YOUTUBE_API_KEY = BuildConfig.ApiKey
     private val YOUTUBE_BASE_URL = "https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id="
 
@@ -81,6 +79,7 @@ class AddSongFragment : Fragment() {
             checkSongUrl()
         }
 
+        // Paste clipboard when paste button has been clicked
         binding.imgBtnPasteClipboard.setOnClickListener {
 
             val clipBoardManager = requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
@@ -91,8 +90,14 @@ class AddSongFragment : Fragment() {
             if (item != null) {
                 binding.etUrl.setText(item.text.toString())
             }
-        }
 
+            Toast.makeText(
+                context,
+                getString(R.string.pasted),
+                Toast.LENGTH_LONG
+            )
+                .show()
+        }
     }
 
     /**
