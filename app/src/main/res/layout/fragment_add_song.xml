@@ -40,6 +40,12 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+            <ImageButton
+                android:id="@+id/img_btn_pasteClipboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_paste" />
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_name"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"

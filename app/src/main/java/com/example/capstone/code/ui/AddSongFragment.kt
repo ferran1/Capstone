@@ -1,10 +1,14 @@
 package com.example.capstone.code.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.util.Base64
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -76,6 +80,19 @@ class AddSongFragment : Fragment() {
         binding.fabSaveSong.setOnClickListener {
             checkSongUrl()
         }
+
+        binding.imgBtnPasteClipboard.setOnClickListener {
+
+            val clipBoardManager = requireContext().getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+            val clipData = clipBoardManager.primaryClip
+            val item : ClipData.Item? = clipData?.getItemAt(0)
+
+            if (item != null) {
+                binding.etUrl.setText(item.text.toString())
+            }
+        }
+
     }
 
     /**
