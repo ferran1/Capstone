@@ -107,12 +107,11 @@ class AddSongFragment : Fragment() {
 
         val songUrl: String = binding.etUrl.text.toString()
 
-        this.songUrl = songUrl // Save the url in a class variable because we want to later access it in other methods
+        this.songUrl = songUrl
 
         when {
             songUrl.contains("youtube", ignoreCase = true) -> {
                 getSongInfo(songUrl, "Youtube")
-//                YoutubeAsyncTask().execute(songUrl)
             }
             songUrl.contains("spotify", ignoreCase = true) -> {
                 this.songUrl = songUrl
@@ -123,10 +122,17 @@ class AddSongFragment : Fragment() {
                 val songName = binding.etName.text.toString()
                 val artist = binding.etArtist.text.toString()
 
-                this.viewModel.insertSong(songUrl, songName, artist, "Soundcloud")
-
-                findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
-
+                if (songName.isNotEmpty() && artist.isNotEmpty()) {
+                    this.viewModel.insertSong(songUrl, songName, artist, "Soundcloud")
+                    findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
+                } else {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.add_soundcloud_song_error),
+                        Toast.LENGTH_LONG
+                    )
+                        .show()
+                }
             }
             else -> {
                 Toast.makeText(

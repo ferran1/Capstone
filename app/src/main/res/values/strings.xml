@@ -7,8 +7,8 @@
     <string name="hint_title_name">Song name (Only needed for Soundcloud)</string>
     <string name="hint_title_artist">Artist (Only needed for Soundcloud)</string>
     <string name="save">Save</string>
-    <string name="incorrect_url_msg">Filled in URL is incorrect, please check the URL and try again</string>
-    <string name="successfully_deleted_song">Successfully deleted the song</string>
+    <string name="incorrect_url_msg">Filled in URL is incorrect, please check the URL and try again.</string>
+    <string name="successfully_deleted_song">Successfully deleted the song.</string>
     <string name="undo">UNDO</string>
     <string name="play_song">Play song</string>
     <string name="song_exists_msg">This song already exists. Please try a different URL.</string>
@@ -16,4 +16,5 @@
     <string name="how_it_works_txt">How it works</string>
     <string name="how_it_works_fragment_txt">But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?</string>
     <string name="back">Back</string>
+    <string name="add_soundcloud_song_error">Something went wrong trying to add the Soundcloud song. Please check all the input fields and try again.</string>
 </resources>

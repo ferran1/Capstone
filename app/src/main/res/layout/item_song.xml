@@ -22,18 +22,21 @@
         android:layout_width="match_parent"
         android:layout_height="99dp"
         app:layout_constraintBottom_toTopOf="@+id/tv_artist"
+        app:layout_constraintEnd_toStartOf="@+id/imageButton"
+        app:layout_constraintStart_toStartOf="@+id/imageButton"
         app:layout_constraintTop_toTopOf="@+id/tv_artist">
 
         <TextView
             android:id="@+id/tv_name"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:textSize="20sp"
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.048"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,22 +57,44 @@
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="4dp"
-            android:textAlignment="viewEnd"
             android:drawablePadding="5dp"
+            android:textAlignment="viewEnd"
+            app:drawableEndCompat="@drawable/ic_youtube"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="Youtube"
-            app:drawableEndCompat="@drawable/ic_youtube" />
+            tools:text="Youtube" />
 
         <Button
             android:id="@+id/btn_play_song"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
             android:text="@string/play_song"
-            app:layout_constraintEnd_toEndOf="@+id/tv_name"
-            app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageButton
+            android:id="@+id/btn_pause_song"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="2dp"
+            app:layout_constraintBottom_toBottomOf="@+id/btn_resume_song"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/btn_resume_song"
+            app:layout_constraintTop_toTopOf="@+id/btn_resume_song"
+            app:srcCompat="@drawable/ic_pause" />
+
+        <ImageButton
+            android:id="@+id/btn_resume_song"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="311dp"
+            android:layout_marginTop="15dp"
+            app:layout_constraintEnd_toStartOf="@+id/btn_pause_song"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_play_button" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
@@ -31,6 +33,8 @@ class SongBacklogAdapter(
     private lateinit var mSpotifyAppRemote: SpotifyAppRemote
 
     private lateinit var mContext: Context
+
+    private var isClicked = false
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -58,8 +62,19 @@ class SongBacklogAdapter(
                 clickListener(song)
             }
 
+            val playSongButton = itemView.findViewById<Button>(R.id.btn_play_song)
+            val pauseSongButton = itemView.findViewById<ImageButton>(R.id.btn_pause_song)
+            val resumeSongButton = itemView.findViewById<ImageButton>(R.id.btn_resume_song)
+
+//            pauseSongButton.isVisible = false
+
             // Play the Spotify song once the "Play song" button has been clicked
-            itemView.findViewById<Button>(R.id.btn_play_song).setOnClickListener { v ->
+            playSongButton.setOnClickListener {
+
+                isClicked = true
+
+                Log.d("IS CLICKED " , isClicked.toString())
+
                 val redirectURI = "http://localhost:8080/callback"
 
                 val connectionParams = ConnectionParams.Builder(SPOTIFY_CLIENT_ID)
@@ -91,7 +106,20 @@ class SongBacklogAdapter(
                         override fun onFailure(throwable: Throwable) {
                             Log.e("MainActivity", throwable.message, throwable)
                         }
-                    });
+                    })
+            }
+
+            if (isClicked) {
+                pauseSongButton.isVisible = true
+                Log.d("IS CLICKED " , isClicked.toString())
+            }
+
+            pauseSongButton.setOnClickListener {
+                mSpotifyAppRemote.playerApi.pause()
+            }
+
+            resumeSongButton.setOnClickListener {
+                mSpotifyAppRemote.playerApi.resume()
             }
 
             when (song.platform) {
@@ -103,7 +131,9 @@ class SongBacklogAdapter(
                             R.drawable.ic_youtube,
                             0
                         )
-                    itemView.findViewById<Button>(R.id.btn_play_song).text = "Play video"
+                    playSongButton.text = "Play video"
+                    pauseSongButton.isVisible = false
+                    resumeSongButton.isVisible = false
                 }
                 "Soundcloud" -> {
                     itemView.findViewById<TextView>(R.id.tv_platform)
@@ -113,7 +143,9 @@ class SongBacklogAdapter(
                             R.drawable.ic_soundcloud,
                             0
                         )
-                    itemView.findViewById<Button>(R.id.btn_play_song).isVisible = false
+                    playSongButton.isVisible = false
+                    pauseSongButton.isVisible = false
+                    resumeSongButton.isVisible = false
                 }
                 else -> {
                     itemView.findViewById<TextView>(R.id.tv_platform)
