@@ -2,15 +2,18 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fillViewport="true"
     android:padding="16dp">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/how_it_works_fragment_txt"
+        android:text="@string/how_it_works_fragment_txt_1"
         android:textSize="22sp">
     </TextView>
+
+
 
 </ScrollView>
 

@@ -267,9 +267,6 @@ class AddSongFragment : Fragment() {
                 queue?.add(postRequest)
 
             }
-            "Soundcloud" -> {
-
-            }
         }
     }
 
