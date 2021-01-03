@@ -50,8 +50,9 @@
         android:layout_marginEnd="97dp"
         android:layout_marginBottom="16dp"
         android:text="@string/how_it_works_txt"
+        app:backgroundTint="#DCDCDC"
         app:icon="@drawable/ic_info"
-        app:iconTint="@color/white"
+        app:iconTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/fab_add_song"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +69,7 @@
         android:contentDescription="@string/add_song"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/materialButton"
+        app:layout_constraintStart_toEndOf="@+id/btn_how_it_works"
         app:srcCompat="@android:drawable/ic_input_add"
         app:tint="@color/white" />
 

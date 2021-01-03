@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.capstone.R
 import com.example.capstone.databinding.FragmentHowItWorksBinding
-import com.example.capstone.databinding.FragmentPlaybackBinding
 
 class HowItWorksFragment: Fragment() {
 
@@ -34,8 +33,6 @@ class HowItWorksFragment: Fragment() {
         requireActivity().title = getString(R.string.how_it_works_txt)
 
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(false)
-
     }
-
 
 }

@@ -43,8 +43,5 @@ class PlaybackFragment: Fragment() {
                 .replace(R.id.playbackFragment, songBacklogFragment).addToBackStack(null)
                 .commit()
         }
-
     }
-
-
 }

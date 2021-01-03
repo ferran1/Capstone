@@ -31,6 +31,9 @@ class SongBacklogAdapter(
 
     private lateinit var mContext: Context
 
+    private val SONG_ID_START_INDEX = 31
+    private val SONG_ID_END_INDEX = 53
+
     private var isClicked = false
 
     override fun onCreateViewHolder(
@@ -92,7 +95,7 @@ class SongBacklogAdapter(
 
                             Log.d("SPOTIFY", "Spotify is connected")
 
-                            val songId = song.url.substring(31, 53)
+                            val songId = song.url.substring(SONG_ID_START_INDEX, SONG_ID_END_INDEX)
 
                             val uri = "spotify:track:$songId"
 

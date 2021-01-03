@@ -1,10 +1,13 @@
 package com.example.capstone.code.ui
 
+import android.content.DialogInterface
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -23,6 +26,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerCallback
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import java.util.*
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -33,6 +37,7 @@ class SongBacklogFragment : Fragment() {
 
     private val viewModel: SongViewModel by viewModels()
     private val songList = arrayListOf<Song>()
+    private val displayList = arrayListOf<Song>()
 //    private val songBacklogAdapter = SongBacklogAdapter(songList)
 
     private lateinit var songBacklogAdapter : SongBacklogAdapter
@@ -53,17 +58,9 @@ class SongBacklogFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = getString(R.string.app_name)
 
-        songBacklogAdapter = SongBacklogAdapter(requireActivity(), songList, ::songItemClicked)
+//        displayList.addAll(songList)
 
-//        val fragment = AddSongFragment()
-//        supportFragmentManager.commit {
-//            setCustomAnimations(
-//                    enter = R.anim.enter_from_right,
-//                    exit = R.anim.exit_to_right,
-//            )
-//            replace(R.id.fragment_container, fragment)
-//            addToBackStack(null)
-//        }
+        songBacklogAdapter = SongBacklogAdapter(requireActivity(), songList, ::songItemClicked)
 
         binding.fabAddSong.setOnClickListener {
             findNavController().navigate(R.id.action_songBacklogFragment_to_addSongFragment)
@@ -72,28 +69,6 @@ class SongBacklogFragment : Fragment() {
         binding.btnHowItWorks.setOnClickListener {
             findNavController().navigate(R.id.action_songBacklogFragment_to_howItWorksFragment)
         }
-
-//        val youtubePlayerView: YouTubePlayerView = binding.youtubePlayerView
-//        lifecycle.addObserver(youtubePlayerView)
-//
-//        youtubePlayerView.addYouTubePlayerListener(object: AbstractYouTubePlayerListener() {
-//
-//            override fun onReady(youTubePlayer: YouTubePlayer) {
-//                super.onReady(youTubePlayer)
-//
-//                val id = "y3bW3H95NMw"
-//
-//                Log.d("ID IS ", id)
-//                youTubePlayer.loadVideo(id, 0F)
-//
-//            }
-//        })
-
-//        youtubePlayerView.addYoutubePlayerListener(object:AbstractYoutubePlayerListener()) {
-//
-//        })
-//        youTubePlayerView.initialize(listener: YouTubePlayerListener)
-
 
         initializeRecyclerView()
 
@@ -105,12 +80,60 @@ class SongBacklogFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         menu.findItem(R.id.action_delete_songs).isVisible = true
+
+        val searchMenuItem = menu.findItem(R.id.search)
+
+        if (searchMenuItem != null) {
+            val searchView = searchMenuItem.actionView as SearchView
+
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+
+                    if (newText!!.isNotEmpty()){
+
+                        displayList.clear()
+                        val search = newText.toLowerCase(Locale.getDefault())
+
+                        songList.forEach {
+                            if (it.name.toLowerCase(Locale.getDefault()).contains(search)){
+                                displayList.add(it)
+                            }
+                        }
+                        songBacklogAdapter.notifyDataSetChanged()
+                    }
+
+                    else {
+                        displayList.clear()
+                        displayList.addAll(songList)
+                        songBacklogAdapter.notifyDataSetChanged()
+                    }
+
+                    return true
+                }
+
+            })
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+
             R.id.action_delete_songs -> {
-                viewModel.deleteAllSongs()
+
+                val builder = AlertDialog.Builder(requireActivity())
+                builder.setTitle("Are you sure!")
+                builder.setMessage("Do you want to delete all your favourite songs?")
+                builder.setPositiveButton("Yes",{ dialogInterface: DialogInterface, i: Int ->
+                    viewModel.deleteAllSongs()
+                })
+                builder.setNegativeButton("No",{ dialogInterface: DialogInterface, i: Int -> })
+                builder.show()
+
                 return true
             }
             else -> {
@@ -140,8 +163,6 @@ class SongBacklogFragment : Fragment() {
             layoutManager = viewManager
             adapter = songBacklogAdapter
         }
-
-//        binding.rvSongs.
 
         createItemTouchHelperSwipe().attachToRecyclerView(binding.rvSongs)
     }

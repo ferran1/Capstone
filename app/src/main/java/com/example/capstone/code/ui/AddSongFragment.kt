@@ -49,6 +49,11 @@ class AddSongFragment : Fragment() {
     private val SPOTIFY_CLIENT_ID = BuildConfig.SpotifyClientId
     private val SPOTIFY_CLIENT_SECRET = BuildConfig.SpotifyClientSecret
 
+    private val ACCESS_TOKEN_START_INDEX = 17
+    private val ACCESS_TOKEN_END_INDEX = 100
+    private val SONG_ID_START_INDEX = 31
+    private val SONG_ID_END_INDEX = 53
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -199,10 +204,10 @@ class AddSongFragment : Fragment() {
                     Response.Listener { response ->
 
                         // Get access token from the JSON response
-                        val accessToken = response.toString().substring(17, 100)
+                        val accessToken = response.toString().substring(ACCESS_TOKEN_START_INDEX, ACCESS_TOKEN_END_INDEX)
 
                         // Execute a GET request to retrieve the song name and artist from the API
-                        val songId = songUrl.substring(31, 53)
+                        val songId = songUrl.substring(SONG_ID_START_INDEX, SONG_ID_END_INDEX)
                         val GETrequestURL = "https://api.spotify.com/v1/tracks/$songId"
                         val secondQueue = Volley.newRequestQueue(requireActivity())
 
@@ -263,9 +268,7 @@ class AddSongFragment : Fragment() {
                         return params
                     }
                 }
-
                 queue?.add(postRequest)
-
             }
         }
     }
@@ -276,31 +279,50 @@ class AddSongFragment : Fragment() {
      */
     private fun addYoutubeSong(songNameAndArtist: String) {
 
-                // TODO: error handling, check if youtube song has a "-" in the title
-                val nameAndArtist = songNameAndArtist.split("-")
+                if (songNameAndArtist.contains("-")) {
+                    val nameAndArtist = songNameAndArtist.split("-")
 
-                val artist = nameAndArtist[0]
+                    val artist = nameAndArtist[0]
 
-                // Remove unnecessary info from title, for example: (Official Music video)
-                if (nameAndArtist[1].contains("(")) {
-                    val songName = nameAndArtist[1].substringBefore("(")
-                    this.viewModel.insertSong(
-                        songUrl,
-                        songName,
-                        artist,
-                        "Youtube"
-                    )
-                } else {
-                    this.viewModel.insertSong(
-                        songUrl,
-                        nameAndArtist[1],
-                        artist,
-                        "Youtube"
-                    )
+                    if (nameAndArtist[1].contains("(")) {
+                        val songName = nameAndArtist[1].substringBefore("(")
+                        this.viewModel.insertSong(
+                            songUrl,
+                            songName,
+                            artist,
+                            "Youtube"
+                        )
+                    } else {
+                        this.viewModel.insertSong(
+                            songUrl,
+                            nameAndArtist[1],
+                            artist,
+                            "Youtube"
+                        )
+                    }
+                } else if (songNameAndArtist.contains("~")){
+                    val nameAndArtist = songNameAndArtist.split("~")
+
+                    val artist = nameAndArtist[0]
+
+                    if (nameAndArtist[1].contains("(")) {
+                        val songName = nameAndArtist[1].substringBefore("(")
+                        this.viewModel.insertSong(
+                            songUrl,
+                            songName,
+                            artist,
+                            "Youtube"
+                        )
+                    } else {
+                        this.viewModel.insertSong(
+                            songUrl,
+                            nameAndArtist[1],
+                            artist,
+                            "Youtube"
+                        )
+                    }
                 }
-
         findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
-
     }
 
     private fun addSpotifySong(songName: String, artist: String) {
@@ -312,32 +334,5 @@ class AddSongFragment : Fragment() {
         )
         findNavController().navigate(R.id.action_addSongFragment_to_songBacklogFragment)
     }
-
-//    @SuppressLint("StaticFieldLeak")
-//    inner class YoutubeAsyncTask : AsyncTask<String, Void?, String>() {
-//
-//        override fun doInBackground(vararg params: String): String {
-//
-//            val url = params[0]
-//
-//            val crawledNameAndArtist = videoTitle
-//
-//            val crawledNameAndArtist = songNameAndArtist
-//
-//            return crawledNameAndArtist
-//        }
-//
-//        override fun onPostExecute(crawledNameAndArtist: String) {
-//            super.onPostExecute(crawledNameAndArtist)
-//
-//            Toast.makeText(
-//                context,
-//                binding.textView.text.toString(),
-//                Toast.LENGTH_LONG
-//            )
-//                .show()
-//            addYoutubeSong(crawledNameAndArtist)
-//        }
-//    }
 
 }
