@@ -35,8 +35,7 @@ class SongBacklogFragment : Fragment() {
     private val songList = arrayListOf<Song>()
 //    private val songBacklogAdapter = SongBacklogAdapter(songList)
 
-    private val songBacklogAdapter =
-        SongBacklogAdapter(songList, ::songItemClicked)
+    private lateinit var songBacklogAdapter : SongBacklogAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,6 +52,8 @@ class SongBacklogFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().title = getString(R.string.app_name)
+
+        songBacklogAdapter = SongBacklogAdapter(requireActivity(), songList, ::songItemClicked)
 
 //        val fragment = AddSongFragment()
 //        supportFragmentManager.commit {
