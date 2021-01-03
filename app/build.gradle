@@ -81,5 +81,9 @@ dependencies {
 
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
 
+    // For spotify remote sdk
+    implementation project(':spotify-app-remote')
+    implementation "com.google.code.gson:gson:2.8.6"
+
 }
 
