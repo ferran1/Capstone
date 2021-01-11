@@ -37,6 +37,7 @@ class SongBacklogFragment : Fragment() {
 
     private val viewModel: SongViewModel by viewModels()
     private val songList = arrayListOf<Song>()
+
     private val displayList = arrayListOf<Song>()
 //    private val songBacklogAdapter = SongBacklogAdapter(songList)
 
